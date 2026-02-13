@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Item Viewer</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f6f7f9;
+      padding: 40px;
+    }
+    .card {
+      max-width: 420px;
+      margin: auto;
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+    .icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+    .item {
+      color: #666;
+      font-size: 14px;
+      margin-top: 6px;
+    }
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #1e1e1e;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: background 0.3s ease;
+    }
+    a::after {
+      content: ' »';
+    }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #999;
+      font-size: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #1e1e1e;
+        color: #f6f7f9;
+      }
+      .card {
+        background: #2c2c2c;
+        box-shadow: 0 10px 30px rgba(255, 255, 255, 0.08);
+      }
+      .item {
+        color: #999;
+      }
+      a {
+        background: #f6f7f9;
+        color: black;
+      }
+      footer {
+        color: #666;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+    <div class="icon" id="icon">⛶</div>
+    <h2 id="name">Item</h2>
+    <!-- <div class="item">Item key: <span id="itemKey">m4</span></div> -->
+    <p>The owner of this <span id="name2">item</span> can view its location.</p>
+    <p>If this item is not familiar to you, learn how to contact the owner to return this item.</p>
+    <a href="https://popoway.me/" target="_blank">Contact Owner</a>
+  </div>
+  <footer>
+    <p>&copy; <span id="footerYear"></span> popoway. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function itemFetch() {
+      const params = new URLSearchParams(window.location.search);
+      const requestedItem = params.get("item");
+
+      // If no query provided, do nothing (keep default HTML)
+      if (!requestedItem) {
+        return;
+      }
+
+      fetch("https://open.popoway.me/items.json")
+        .then(res => res.json())
+        .then(data => {
+          const items = data.payload || [];
+          const match = items.find(i => i.item === requestedItem);
+
+          if (!match) return; // Keep default if not found
+
+          // Replace existing content
+          document.getElementById("icon").textContent = match.icon;
+          document.getElementById("name").textContent = match.name;
+          document.getElementById("name2").textContent = match.name;
+          // document.getElementById("itemKey").textContent = match.item;
+        })
+        .catch(() => {
+          // On error, keep default HTML silently
+      });
+    }
+    function hack() {
+      document.querySelector('#footerYear').textContent = new Date().getFullYear();
+      console.log('%cHi there!', 'color:white; background:#439FEF; font-size: 16pt');
+      console.log('%cLove to hack? Connect with me on LinkedIn: ming.fyi/linkedin or Email me at ming@popoway.com', 'font-size: 12pt');
+    }
+    window.addEventListener('DOMContentLoaded', (event) => {
+      itemFetch();
+      hack();
+    });
+  </script>
+
+</body>
+
+</html>
